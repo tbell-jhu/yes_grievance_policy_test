@@ -1,0 +1,2 @@
+# yes_grievance_policy_test
+This is not the official project for the YES grievance policy. This is just a testing procedure to make sure that the process works. All names and instances are fake and have been generated through generators from google. Please be advised that once this pilot program has been inspected and passed the future program will not go through version control as to be complaint with HIPAA and other occurring laws.
