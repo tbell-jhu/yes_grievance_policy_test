@@ -22,7 +22,9 @@ library(janitor)
 
 
 ```{r read in data from google sheets}
-gs_auth(new_user = TRUE)
+#tkn <- gs_auth(new_user = TRUE)
+#saveRDS(tkn, "data/tkn.rds")
+gs_auth(token = "data/tkn.rds")
 ```
 
 ```{r}
@@ -30,7 +32,7 @@ gs_ls()
 survey_sheet <- gs_title('YES Grievance TEST (Responses)')
 report <- gs_read(survey_sheet) %>% 
           clean_names() %>%
-          mutate(describe_incident_include_dates_and_locations_and_be_as_factual_as_possible = incident)
+          rename(incident = describe_incident_include_dates_and_locations_and_be_as_factual_as_possible)
 colnames(report)
 ```
 
