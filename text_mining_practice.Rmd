@@ -36,12 +36,15 @@ colnames(report)
 
 
 ```{r find words}
+#summary of entire chunk
+#removing common words and finding out high freq words
 data("stop_words")
 words <- report %>%
   unnest_tokens(word, incident) %>%
   count(word, sort = TRUE) %>%
   ungroup() %>%
-  anti_join(stop_words)
+  anti_join(stop_words) 
+
 
 total_words <- words %>%
   group_by(word) %>%
@@ -51,4 +54,18 @@ book_words <- left_join(words, total_words)
 
 book_words
 ```
+
+```{r seeing how many times people input grievances}
+#chunk summary
+#shows how many times a client's name appears in the report!
+client_names <- report %>%
+  unnest_tokens(client_name, name) %>%
+  count(client_name, sort = TRUE) %>%
+  ungroup()
+
+client_names
+
+```
+
+
 
