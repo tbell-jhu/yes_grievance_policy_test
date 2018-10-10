@@ -5,14 +5,12 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-#install and load needed packages
-install.packages("stringr")
-#helps mine through text
-install.packages("tidytext")
-#loads df of collection of jane austin books. 
-#think of this as reading in the data
-install.packages("googlesheets")
-install.packages("janitor")
+
+## install packages if necessary
+list.of.packages <- c("stringr", "tidytext", "googlesheets", "janitor", "dplyr")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 library(dplyr)
 library(stringr)
 library(tidytext)
@@ -38,18 +36,19 @@ colnames(report)
 
 
 ```{r find words}
-book_words <- austen_books() %>%
-  unnest_tokens(word, text) %>%
-  count(book, word, sort = TRUE) %>%
-  ungroup()
+data("stop_words")
+words <- report %>%
+  unnest_tokens(word, incident) %>%
+  count(word, sort = TRUE) %>%
+  ungroup() %>%
+  anti_join(stop_words)
 
-total_words <- book_words %>% 
-  group_by(book) %>% 
+total_words <- words %>%
+  group_by(word) %>%
   summarize(total = sum(n))
 
-book_words <- left_join(book_words, total_words)
+book_words <- left_join(words, total_words)
 
 book_words
-
 ```
 
