@@ -1,0 +1,53 @@
+---
+title: "yes_grievance_test"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install and load needed packages
+install.packages("stringr")
+#helps mine through text
+install.packages("tidytext")
+#loads df of collection of jane austin books. 
+#think of this as reading in the data
+install.packages("googlesheets")
+install.packages("janitor")
+library(dplyr)
+library(stringr)
+library(tidytext)
+library(googlesheets)
+library(janitor)
+```
+
+
+```{r read in data from google sheets}
+gs_auth(new_user = TRUE)
+```
+
+```{r}
+gs_ls()
+survey_sheet <- gs_title('YES Grievance TEST (Responses)')
+report <- gs_read(survey_sheet) %>% 
+          clean_names() %>%
+          mutate(describe_incident_include_dates_and_locations_and_be_as_factual_as_possible = incident)
+colnames(report)
+```
+
+
+```{r find words}
+book_words <- austen_books() %>%
+  unnest_tokens(word, text) %>%
+  count(book, word, sort = TRUE) %>%
+  ungroup()
+
+total_words <- book_words %>% 
+  group_by(book) %>% 
+  summarize(total = sum(n))
+
+book_words <- left_join(book_words, total_words)
+
+book_words
+
+```
+

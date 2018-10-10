@@ -1,0 +1,61 @@
+---
+title: "yes_grievance_report_test"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("googlesheets", "rJava", "mailR")
+library("googlesheets")
+library("rJava")
+library("mailR")
+options(httr_oob_default=TRUE)
+#this is only done interactively - in an interactive rsession
+#run this code in Console - code has to be changed for RMarkdown doc
+#this line of code authorized R to use google sheets. 
+#R is now an app with permissions
+gs_auth()
+
+# this is the url of the yes grievance google sheet.
+yes_url = gs_url("https://docs.google.com/spreadsheets/d/1zakQm1rtY8BJ7CWHFTdnZ0ZohUvkBQwbHamo_rcSwTw/edit#gid=1245323107")
+
+#this will read in data from google sheet - this reads up to date data
+dat = gs_read(yes_url)
+
+head(dat)
+```
+can use dplyr to arrange
+can look for certain keywords or for other urgent keywords
+there is a function Sys.date() to find out today's date and time to figure out how long the complaint has been filed.
+cable extra package (reference link Jeff sent on Sept 20,2018)
+set up so that this data set will be able to see the reports and graphs. use this example data set to play around so that the report generates how they want. 
+after we have come to a consensus agreement, talk to Jeff to turn this into an app.
+
+look up google sheets token for r markdown:
+1. edit gitnore to include a filename for the filename that i will save the token in 
+    ex: key = "blahblah"
+        save(key,file="key.rda") 
+2. push gitignore
+3. save the token in the filename
+4. push changes, although file will not push because of the gitignore
+
+report can be summarised by how many reports daily, highlight report that matches certain words, can highlight which issues. 
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
