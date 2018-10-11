@@ -3,11 +3,12 @@ title: "yes_grievance_test"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, echo=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
+##can create a sentiments package that can include slang and curse
+##words
 ## install packages if necessary
-list.of.packages <- c("stringr", "tidytext", "googlesheets", "janitor", "dplyr")
+list.of.packages <- c("stringr", "tidytext", "googlesheets", "janitor", "dplyr", "knitr")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
@@ -16,23 +17,38 @@ library(stringr)
 library(tidytext)
 library(googlesheets)
 library(janitor)
+library(knitr)
+library(flexdashboard)
 ```
 
 
-```{r read in data from google sheets}
+```{r read in data from google sheets, echo=FALSE}
 #tkn <- gs_auth(new_user = TRUE)
 #saveRDS(tkn, "data/tkn.rds")
 gs_auth(token = "data/tkn.rds")
 ```
 
-```{r}
+```{r rename and clean data, echo=FALSE}
 gs_ls()
 survey_sheet <- gs_title('YES Grievance TEST (Responses)')
 report <- gs_read(survey_sheet) %>% 
           clean_names() %>%
-          rename(incident = describe_incident_include_dates_and_locations_and_be_as_factual_as_possible)
+          rename(incident = describe_incident_include_dates_and_locations_and_be_as_factual_as_possible) %>%
+          select(-date_of_incident_1)
 colnames(report)
+
+report %>%
+mutate (open = case_when(
+  x %% 35 == 0 ~ "fizz buzz",
+  x %% 5 == 0 ~ "fizz",
+  x %% 7 == 0 ~ "buzz",
+  TRUE ~ as.character(x)
+)
 ```
+
+
+
+
 
 
 ```{r find words}
@@ -67,5 +83,13 @@ client_names
 
 ```
 
-
+```{r testing sentiments package}
+tidy_books <- report %>%
+  group_by(incident) %>%
+  mutate(linenumber = row_number(),
+         chapter = cumsum(str_detect(text, regex("^chapter [\\divxlc]", 
+                                                 ignore_case = TRUE)))) 
+  ungroup() %>%
+  unnest_tokens(word, text)
+```
 

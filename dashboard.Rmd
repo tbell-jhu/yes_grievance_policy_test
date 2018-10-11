@@ -1,0 +1,63 @@
+---
+title: "Grievance Report"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+##can create a sentiments package that can include slang and curse
+##words
+## install packages if necessary
+list.of.packages <- c("stringr", "tidytext", "googlesheets", "janitor", "dplyr", "knitr", "flexdashboard", "DT")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+library(dplyr)
+library(stringr)
+library(tidytext)
+library(googlesheets)
+library(janitor)
+library(knitr)
+library(flexdashboard)
+library(DT)
+```
+
+```{r read in data from google sheets, echo=FALSE, results=FALSE}
+#tkn <- gs_auth(new_user = TRUE)
+#saveRDS(tkn, "data/tkn.rds")
+gs_auth(token = "data/tkn.rds")
+```
+
+```{r rename and clean data, echo=FALSE, results=FALSE}
+gs_ls()
+survey_sheet <- gs_title('YES Grievance TEST (Responses)')
+report <- gs_read(survey_sheet) %>%
+          as.data.frame(report)%>%
+          clean_names() %>%
+          rename(incident = describe_incident_include_dates_and_locations_and_be_as_factual_as_possible) %>%
+          select(-date_of_incident_1) 
+colnames(report)
+```
+
+
+-----------------------------------------------------------------------
+### Total Cases
+
+```{r value box for open closed columns, echo=FALSE}
+cases <- count(report, open_closed)
+valueBox(cases, icon = "fa-pencil", href = "https://docs.google.com/spreadsheets/d/1zakQm1rtY8BJ7CWHFTdnZ0ZohUvkBQwbHamo_rcSwTw/edit#gid=1245323107")
+```
+
+
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r, echo=FALSE}
+DT::datatable(report, options = list(bPaginate = FALSE)) 
+  
+```
+
